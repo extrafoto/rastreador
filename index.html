@@ -10,7 +10,7 @@
             margin: 20px;
         }
         h1 {
-            color: #005a9c;
+            color: white; /* Título do header branco */
         }
         h2 {
             margin-top: 30px;
@@ -40,6 +40,20 @@
         button:hover {
             background-color: #45a049;
         }
+        a {
+            color: white; /* Títulos clicáveis em branco */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .table-links {
+            color: #005a9c; /* Cor visível para os links nas tabelas */
+            text-decoration: none;
+        }
+        .table-links:hover {
+            text-decoration: underline;
+        }
         .editoria-title {
             margin-top: 50px;
             padding: 10px;
@@ -67,18 +81,74 @@
         nav a:hover {
             text-decoration: underline;
         }
+        /* Lightbox CSS */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            overflow: auto;
+        }
+        .lightbox-content {
+            position: relative;
+            margin: 15% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            background-color: white;
+            color: black;
+            border-radius: 10px;
+        }
+        .lightbox-content h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+        .close-lightbox {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            color: black;
+            font-size: 35px;
+            font-weight: bold;
+        }
+        .close-lightbox:hover, .close-lightbox:focus {
+            color: red;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Header com âncoras para Globo e Extra -->
+    <!-- Header com âncoras para Globo e Extra e Sobre -->
     <header>
-        <h1>Links rápidos das matérias mais lidas Globo e Extra</h1>
+        <h1>Recirculação rápida das matérias mais lidas do Globo e Extra</h1>
         <nav>
             <a href="#globo-section">Globo</a>
             <a href="#extra-section">Extra</a>
+            <a href="javascript:void(0)" onclick="openLightbox()">Sobre</a>
         </nav>
     </header>
+
+    <!-- Lightbox (Sobre) -->
+    <div id="lightbox" class="lightbox">
+        <div class="lightbox-content">
+            <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+            <h2>Sobre esta Página</h2>
+            <p>Esta página foi criada para facilitar e agilizar o processo de recirculação de matérias. Aqui, você encontrará links rápidos para as matérias mais lidas das editorias do Globo e Extra, permitindo que jornalistas acessem e reutilizem esses conteúdos de forma prática e eficiente. Com isso, o processo de construção de postagens é otimizado, garantindo um ganho significativo de tempo na produção, publicação e atualização de conteúdos, mantendo o foco na qualidade da informação sem perder tempo com buscas manuais.</p>
+            <p>Os links são capturados diretamente das páginas de notícias das editorias de cada site, e a página se atualiza automaticamente a cada 5 minutos para garantir que as informações estejam sempre atualizadas.</p>
+            <p>Você pode copiar o texto completo com o link ou apenas o link, usando os botões ao lado de cada matéria. Isso ajuda a facilitar o processo de colagem desses links em outros documentos ou plataformas de publicação.</p>
+            <p>A página captura as notícias das seguintes fontes:</p>
+            <ul>
+                <li><strong>Globo</strong>: https://oglobo.globo.com</li>
+                <li><strong>Extra</strong>: https://extra.globo.com</li>
+		<p>Versão deste código - v-mais-lidas-globo-extra-5 13/09/2024</p>
+            </ul>
+        </div>12:11 13/09/2024
+    </div>
 
     <!-- Seção Globo -->
     <h2 id="globo-section">Globo</h2>
@@ -91,48 +161,31 @@
     <div id="extra-error" class="error"></div>
 
     <script>
-        // Função para copiar o texto com hiperlink, removendo a parte após o '#' e sem hífen entre título e link
+        // Função para abrir o lightbox
+        function openLightbox() {
+            document.getElementById('lightbox').style.display = 'block';
+        }
+
+        // Função para fechar o lightbox
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+
+        // Função para copiar o texto com hiperlink
         function copyAsLink(text, url, button) {
-            const originalText = button.textContent;
-
-            // Remove a parte do link após o '#'
-            const cleanUrl = url.split('#')[0];
-
-            // Texto formatado sem hífen entre o título e o link
-            const formattedLink = `${text} ${cleanUrl}`;
-            
-            navigator.clipboard.write([
-                new ClipboardItem({
-                    'text/plain': new Blob([formattedLink], { type: 'text/plain' })
-                })
-            ]).then(() => {
+            const formattedLink = `${text} ${url.split('#')[0]}`; // Remove parte após #
+            navigator.clipboard.writeText(formattedLink).then(() => {
                 button.textContent = 'Copiado!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
-            }).catch(err => {
-                console.error('Erro ao copiar o texto com link: ', err);
+                setTimeout(() => button.textContent = 'Copiar texto com link', 2000);
             });
         }
 
-        // Função para copiar apenas o link, removendo a parte após o '#'
+        // Função para copiar apenas o link
         function copyOnlyLink(url, button) {
-            const originalText = button.textContent;
-
-            // Remove a parte do link após o '#'
             const cleanUrl = url.split('#')[0];
-
-            navigator.clipboard.write([
-                new ClipboardItem({
-                    'text/plain': new Blob([cleanUrl], { type: 'text/plain' })
-                })
-            ]).then(() => {
+            navigator.clipboard.writeText(cleanUrl).then(() => {
                 button.textContent = 'Link copiado!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
-            }).catch(err => {
-                console.error('Erro ao copiar o link: ', err);
+                setTimeout(() => button.textContent = 'Copiar apenas o link', 2000);
             });
         }
 
@@ -182,7 +235,7 @@
                         const row = document.createElement('tr');
 
                         const descriptionCell = document.createElement('td');
-                        descriptionCell.textContent = link.textContent;
+                        descriptionCell.innerHTML = `<a href="${link.href}" target="_blank" class="table-links">${link.textContent}</a>`;
 
                         const copyButtonCell = document.createElement('td');
 
@@ -263,7 +316,7 @@
                         const row = document.createElement('tr');
 
                         const descriptionCell = document.createElement('td');
-                        descriptionCell.textContent = link.textContent;
+                        descriptionCell.innerHTML = `<a href="${link.href}" target="_blank" class="table-links">${link.textContent}</a>`;
 
                         const copyButtonCell = document.createElement('td');
 
@@ -305,6 +358,7 @@
             container.innerHTML = ''; // Limpa o container antes de popular com os dados
 
             const editoriasGlobo = [
+                { name: "Home", url: "https://oglobo.globo.com/" },
                 { name: "Esportes", url: "https://oglobo.globo.com/esportes/" },
                 { name: "Cultura", url: "https://oglobo.globo.com/cultura/" },
                 { name: "Saúde", url: "https://oglobo.globo.com/saude/" },
@@ -318,7 +372,7 @@
 
             editoriasGlobo.forEach(editoria => {
                 const editoriaTitle = document.createElement('h2');
-                editoriaTitle.textContent = `Mais Lidas - ${editoria.name}`;
+                editoriaTitle.innerHTML = `<a href="${editoria.url}" target="_blank">Mais Lidas - ${editoria.name}</a>`;
                 editoriaTitle.classList.add('editoria-title', 'editoria-title-globo');
                 container.appendChild(editoriaTitle);
 
@@ -347,7 +401,7 @@
 
             editoriasExtra.forEach(editoria => {
                 const editoriaTitle = document.createElement('h2');
-                editoriaTitle.textContent = `Mais Lidas - ${editoria.name}`;
+                editoriaTitle.innerHTML = `<a href="${editoria.url}" target="_blank">Mais Lidas - ${editoria.name}</a>`;
                 editoriaTitle.classList.add('editoria-title', 'editoria-title-extra');
                 container.appendChild(editoriaTitle);
 

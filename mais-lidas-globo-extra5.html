@@ -70,8 +70,7 @@
                 apiKey: API_KEY,
                 clientId: CLIENT_ID,
                 discoveryDocs: DISCOVERY_DOCS,
-                scope: SCOPES,
-                // cookiePolicy removido para evitar o erro
+                scope: SCOPES
             }).then(() => {
                 console.log("Cliente OAuth inicializado com sucesso");
                 gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
